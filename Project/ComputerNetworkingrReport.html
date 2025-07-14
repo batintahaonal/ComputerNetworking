@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Troubleshooting Guide - Packet Tracer</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem 0;
+            text-align: center;
+        }
+        nav ul {
+            padding: 0;
+            list-style: none;
+            text-align: center;
+            background-color: #444;
+        }
+        nav ul li {
+            display: inline;
+        }
+        nav ul li a {
+            display: inline-block;
+            padding: 1rem;
+            text-decoration: none;
+            color: #fff;
+        }
+        nav ul li a:hover {
+            background-color: #555;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            padding: 20px;
+            background-color: #fff;
+        }
+        section {
+            padding: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px #ccc dotted;
+        }
+        /* İsteğiniz üzerine fotoğraflar için özel bir CSS eklemiyorum,
+           ancak isterseniz daha sonra eklenebilir. */
+        h1, h2, h3, h4 {
+            color: #333;
+        }
+        h1 { font-size: 2em; }
+        h2 { font-size: 1.5em; margin-top: 1.5em; }
+        h3 { font-size: 1.2em; margin-top: 1em; }
+        h4 { font-size: 1em; margin-top: 0.8em; }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #333;
+            color: #fff;
+            margin-top: 20px;
+        }
+        .page-nav {
+            margin-bottom: 30px;
+            padding: 10px;
+            background-color: #e9e9e9;
+            border-radius: 5px;
+        }
+        .page-nav strong {
+            display: block;
+            margin-bottom: 10px;
+        }
+        .page-nav a {
+            display: inline-block;
+            margin-right: 10px;
+            margin-bottom: 5px;
+            text-decoration: none;
+            color: dodgerblue;
+            padding: 5px 8px;
+            border: 1px solid dodgerblue;
+            border-radius: 3px;
+        }
+        .page-nav a:hover {
+            background-color: dodgerblue;
+            color: white;
+            text-decoration: none;
+        }
+        pre {
+            background-color: #2d2d2d;
+            color: #ccc;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto; /* Yatay kaydırma çubuğu */
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+        }
+        ul {
+            margin-left: 20px;
+        }
+        em { /* PT Visual için */
+            color: #555;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Network Troubleshooting Guide: Practical Solutions with Packet Tracer</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#intro">Introduction</a></li>
+            <li><a href="#problem1-1">Problem 1.1</a></li>
+            <li><a href="#problem1-2">Problem 1.2</a></li>
+            <li><a href="#problem1-3">Problem 1.3</a></li>
+            <li><a href="#problem2-1">Problem 2.1</a></li>
+            <li><a href="#problem2-2">Problem 2.2</a></li>
+            <li><a href="#problem2-3">Problem 2.3</a></li>
+            <li><a href="#problem3-1">Problem 3.1</a></li>
+            <li><a href="#problem3-2">Problem 3.2</a></li>
+            <li><a href="#problem3-3">Problem 3.3</a></li>
+            <li><a href="#problem4-1">Problem 4.1</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <section id="intro">
+            <h2>Introduction</h2>
+            <p>This guide is designed to help network administrators and students understand common basic network problems and how to simulate and resolve them step-by-step in a Cisco Packet Tracer environment. Each problem is categorized by its respective network layer, and the solution steps are explained in detail. This will allow you to reinforce your theoretical knowledge with practical applications.</p>
+        </section>
+
+        <!-- Sayfa içi gezinti bağlantıları -->
+        <div class="page-nav">
+            <strong>Navigate within this guide:</strong>
+            <a href="#problem1-1">Problem 1.1: VLAN Assignment</a>
+            <a href="#problem1-2">Problem 1.2: Port Security</a>
+            <a href="#problem1-3">Problem 1.3: Trunk Config</a>
+            <a href="#problem2-1">Problem 2.1: Default Gateway</a>
+            <a href="#problem2-2">Problem 2.2: Static Route</a>
+            <a href="#problem2-3">Problem 2.3: Standard ACL</a>
+            <a href="#problem3-1">Problem 3.1: DHCP Gateway/DNS</a>
+            <a href="#problem3-2">Problem 3.2: DHCP Helper</a>
+            <a href="#problem3-3">Problem 3.3: DNS Record</a>
+            <a href="#problem4-1">Problem 4.1: Interface Down</a>
+        </div>
+
+        <!-- SECTION 1: LAYER 2 ISSUES AND SOLUTIONS -->
+        <section id="problem1-1">
+            <h2>Problem 1.1: Communication Issue Due to Incorrect VLAN Assignment</h2>
+            <h3>Concept:</h3>
+            <p>VLAN (Virtual Local Area Network) allows for the creation of multiple logical broadcast domains on a single physical switch, logically segmenting networks. Devices in different VLANs cannot communicate directly (without a Layer 3 device), even if they are in the same IP subnet.</p>
+            <h3>Problem Description:</h3>
+            <p>Two computers (PC0 and PC1) are in the same IP address block (e.g., 192.168.1.0/24) but cannot ping each other. Upon investigation, it's found that one of the PCs is mistakenly assigned to a different VLAN, or both are assigned to VLANs different from what they should be.</p>
+            <h3>Packet Tracer Scenario:</h3>
+            <h4>Required Devices:</h4>
+            <ul>
+                <li>1 x Switch (e.g., 2960)</li>
+                <li>2 x PCs.</li>
+            </ul>
+            <h4>Connections:</h4>
+            <ul>
+                <li>PC0 -> Switch Fa0/1</li>
+                <li>PC1 -> Switch Fa0/2</li>
+            </ul>
+            <h4>Basic Configurations:</h4>
+            <p>PC0 IP: 192.168.1.10 / Subnet Mask: 255.255.255.0</p>
+            <p>PC1 IP: 192.168.1.11 / Subnet Mask: 255.255.255.0</p>
+            <p>Create VLAN 10 (DATA_VLAN) and VLAN 20 (GUEST_VLAN) on the switch.</p>
+            <pre><code>Switch> enable
+Switch# configure terminal
+Switch(config)# vlan 10
+Switch(config-vlan)# name DATA_VLAN
+Switch(config-vlan)# exit
+Switch(config)# vlan 20
+Switch(config-vlan)# name GUEST_VLAN
+Switch(config-vlan)# exit</code></pre>
+            <h3>Simulating the Problem:</h3>
+            <p>Assign PC0's connected port (Fa0/1) to VLAN 10.</p>
+            <pre><code>Switch(config)# interface FastEthernet0/1
+Switch(config-if)# switchport mode access
+Switch(config-if)# switchport access vlan 10
+Switch(config-if)# exit</code></pre>
+            <p>Assign PC1's connected port (Fa0/2) incorrectly to VLAN 20.</p>
+            <pre><code>Switch(config)# interface FastEthernet0/2
+Switch(config-if)# switchport mode access
+Switch(config-if)# switchport access vlan 20
+Switch(config-if)# exit</code></pre>
+            <p>Try to ping PC1 from PC0 (Command Prompt: <code>ping 192.168.1.11</code>). The ping will fail.</p>
+            <p><em>PT Visual: PC0 Command Prompt screen shows "Request timed out." messages.</em></p>
+            <p>Check VLAN assignments on the switch:</p>
+            <pre><code>Switch# show vlan brief</code></pre>
+            <p><em>PT Visual: The output of <code>show vlan brief</code> shows Fa0/1 in VLAN 10 and Fa0/2 in VLAN 20.</em></p>
+            <h3>Solution Steps:</h3>
+            <p>Assign PC1's connected port Fa0/2 to the correct VLAN (VLAN 10).</p>
+            <pre><code>Switch(config)# interface FastEthernet0/2
+Switch(config-if)# switchport access vlan 10
+Switch(config-if)# exit</code></pre>
+            <h3>Verifying the Solution:</h3>
+            <p>Try to ping PC1 from PC0 again (<code>ping 192.168.1.11</code>). The ping will be successful.</p>
+            <p><em>PT Visual: PC0 Command Prompt screen shows successful ping replies like "Reply from 192.168.1.11: bytes=32 time<1ms TTL=128".</em></p>
+            <p>Check VLAN assignments on the switch again:</p>
+            <pre><code>Switch# show vlan brief</code></pre>
+            <p><em>PT Visual: The output of <code>show vlan brief</code> shows both Fa0/1 and Fa0/2 in VLAN 10.</em></p>
+            <img src="C:\Users\casper\desktop\network_solution1.png" alt="">
+            <img src="C:\Users\casper\desktop\network_output1.png" alt="">
+        </section>
+
+        <section id="problem1-2">
+            <h2>Problem 1.2: Port Shutdown Due to Port Security Violation</h2>
+            <h3>Concept:</h3>
+            <p>Port Security is a security feature that allows only specific MAC addresses or a specific number of MAC addresses to connect to a switch port. In case of a violation, the port can be shut down (err-disabled), restricted, or the violation can be logged (protect).</p>
+            <h3>Problem Description:</h3>
+            <p>Port Security is configured on a switch port. When the allowed number of MAC addresses is exceeded or an unauthorized MAC address connects, the port goes into "err-disabled" (shutdown) mode, and communication through that port is cut off.</p>
+            <h3>Packet Tracer Scenario:</h3>
+            <h4>Required Devices:</h4>
+            <ul>
+                <li>1 x Switch (e.g., 2960)</li>
+                <li>2 x PCs (PC-Authorized, PC-Unauthorized).</li>
+            </ul>
+            <h4>Connections:</h4>
+            <p>Initially PC-Authorized -> Switch Fa0/1. Later, PC-Unauthorized -> Switch Fa0/1.</p>
+            <h4>Basic Configurations:</h4>
+            <p>PCs can be given any IP address (e.g., 192.168.1.x/24). The goal is to test L2 connectivity.</p>
+            <h3>Simulating the Problem:</h3>
+            <p>Enable Port Security on switch port Fa0/1, allow a maximum of 1 MAC address, and set the violation mode to shutdown. Configure it to learn MAC addresses dynamically (sticky).</p>
+            <pre><code>Switch> enable
+Switch# configure terminal
+Switch(config)# interface FastEthernet0/1
+Switch(config-if)# switchport mode access
+Switch(config-if)# switchport port-security
+Switch(config-if)# switchport port-security maximum 1
+Switch(config-if)# switchport port-security mac-address sticky
+Switch(config-if)# switchport port-security violation shutdown
+Switch(config-if)# exit</code></pre>
+            <p>Connect PC-Authorized to Fa0/1. Ping from PC-Authorized to the switch (if it has an SVI IP) or another device on the network to make the port learn its MAC address.</p>
+            <p><em>PT Visual: The link light on Switch Fa0/1 port turns green.</em></p>
+            <p>Check the port security status:</p>
+            <pre><code>Switch# show port-security interface FastEthernet0/1</code></pre>
+            <p><em>PT Visual: The output shows "Port Security: Enabled", "Port Status: Secure-up", "Violation Mode: Shutdown", "Sticky MAC Addresses: 1", and the learned MAC address.</em></p>
+            <p>Now, disconnect PC-Authorized from Fa0/1 and connect PC-Unauthorized to the same port (Fa0/1).</p>
+            <p>When you try to send a ping from PC-Unauthorized, or after a short while for the switch to update its ARP table, the port will shut down due to a violation.</p>
+            <p><em>PT Visual: The link light on Switch Fa0/1 port turns red (or orange then red).</em></p>
+            <p>Check the port status:</p>
+            <pre><code>Switch# show interfaces FastEthernet0/1 status</code></pre>
+            <p><em>PT Visual: The output shows the port is "err-disabled".</em></p>
+            <pre><code>Switch# show port-security interface FastEthernet0/1</code></pre>
+            <p><em>PT Visual: The output shows "Port Status: Secure-shutdown", "SecurityViolationCount: 1".</em></p>
+            <h3>Solution Steps:</h3>
+            <p>First, understand the cause of the violation. In this scenario, an unauthorized MAC address was connected.</p>
+            <p>To reactivate the port, first shut it down and then bring it up:</p>
+            <pre><code>Switch(config)# interface FastEthernet0/1
+Switch(config-if)# shutdown
+Switch(config-if)# no shutdown
+Switch(config-if)# exit</code></pre>
+            <p><strong>Important Note:</strong> Simply re-enabling the port is not a permanent solution. You must either review the Port Security policy (e.g., increase the maximum MAC count, statically add the new MAC address) or ensure only the authorized device is connected. In this scenario, disconnecting PC-Unauthorized and reconnecting PC-Authorized resolves the immediate issue.</p>
+            <h3>Verifying the Solution:</h3>
+            <p>Reconnect PC-Authorized to Fa0/1.</p>
+            <p>Observe that the link light turns green.</p>
+            <p><em>PT Visual: The link light on Switch Fa0/1 port turns green.</em></p>
+            <p>Perform a ping test from PC-Authorized. It will be successful.</p>
+            <p>Check the port status:</p>
+            <pre><code>Switch# show interfaces FastEthernet0/1 status</code></pre>
+            <p><em>PT Visual: The output shows the port is "connected" and "up".</em></p>
+            <img src="C:\Users\casper\desktop\network_solution2.png" alt="">
+            <img src="C:\Users\casper\desktop\network_output2.png" alt="">
+        </section>
+
+        <section id="problem1-3">
+            <h2>Problem 1.3: Inter-VLAN Communication Issue (Without Router-on-a-Stick) Due to Missing or Incorrect Trunk Configuration</h2>
+            <h3>Concept:</h3>
+            <p>Trunk ports are used to carry traffic for multiple VLANs (usually using IEEE 802.1Q tagging) between two switches. If multiple VLANs need to communicate across two switches, the link between them must be configured as a trunk.</p>
+            <h3>Problem Description:</h3>
+            <p>Two switches (SW1 and SW2) are connected. The same VLANs (e.g., VLAN 10, VLAN 20) are defined on both switches. A PC in VLAN 10 on SW1 cannot communicate with another PC in VLAN 10 on SW2. The reason is that the inter-switch link is not configured as a trunk or is misconfigured.</p>
+            <h3>Packet Tracer Scenario:</h3>
+            <h4>Required Devices:</h4>
+            <ul>
+                <li>2 x Switches (e.g., 2960)</li>
+                <li>4 x PCs.</li>
+            </ul>
+            <h4>Connections:</h4>
+            <ul>
+                <li>PC0 (VLAN 10) -> SW1 Fa0/1</li>
+                <li>PC1 (VLAN 20) -> SW1 Fa0/2</li>
+                <li>SW1 Gi0/1 -> SW2 Gi0/1 (Inter-switch link)</li>
+                <li>PC2 (VLAN 10) -> SW2 Fa0/1</li>
+                <li>PC3 (VLAN 20) -> SW2 Fa0/2</li>
+            </ul>
+            <h4>Basic Configurations:</h4>
+            <p>All PCs can be in the same IP subnet (e.g., 192.168.1.0/24) as the goal is to test communication within the same VLAN across switches.</p>
+            <p>PC0: 192.168.1.10/24</p>
+            <p>PC1: 192.168.1.11/24</p>
+            <p>PC2: 192.168.1.12/24</p>
+            <p>PC3: 192.168.1.13/24</p>
+            <p>Create VLAN 10 and VLAN 20 on SW1 and SW2.</p>
+            <pre><code>// Same commands on SW1 and SW2
+Switch> enable
+Switch# configure terminal
+Switch(config)# vlan 10
+Switch(config-vlan)# name VLAN10_DATA
+Switch(config-vlan)# exit
+Switch(config)# vlan 20
+Switch(config-vlan)# name VLAN20_VOICE
+Switch(config-vlan)# exit</code></pre>
+            <p>Assign ports to their respective VLANs:</p>
+            <pre><code>// On SW1
+Switch(config)# interface FastEthernet0/1
+Switch(config-if)# switchport mode access
+Switch(config-if)# switchport access vlan 10
+Switch(config-if)# exit
+Switch(config)# interface FastEthernet0/2
+Switch(config-if)# switchport mode access
+Switch(config-if)# switchport access vlan 20
+Switch(config-if)# exit
+
+// On SW2
+Switch(config)# interface FastEthernet0/1
+Switch(config-if)# switchport mode access
+Switch(config-if)# switchport access vlan 10
+Switch(config-if)# exit
+Switch(config)# interface FastEthernet0/2
+Switch(config-if)# switchport mode access
+Switch(config-if)# switchport access vlan 20
+Switch(config-if)# exit</code></pre>
+            <h3>Simulating the Problem:</h3>
+            <p>Do not configure the inter-switch link ports (Gi0/1) as trunks (they might be in access mode by default or auto mode via DTP, which can cause issues).</p>
+            <p>Try to ping PC2 (VLAN 10, SW2) from PC0 (VLAN 10, SW1) (<code>ping 192.168.1.12</code>). The ping will fail.</p>
+            <p><em>PT Visual: PC0 Command Prompt screen shows "Request timed out." messages.</em></p>
+            <p>Similarly, a ping from PC1 (VLAN 20, SW1) to PC3 (VLAN 20, SW2) will also fail.</p>
+            <h3>Solution Steps:</h3>
+            <p>Configure the inter-switch link ports (Gi0/1) on SW1 and SW2 as trunk ports.</p>
+            <pre><code>// On SW1
+Switch(config)# interface GigabitEthernet0/1
+Switch(config-if)# switchport mode trunk
+Switch(config-if)# exit
+
+// On SW2
+Switch(config)# interface GigabitEthernet0/1
+Switch(config-if)# switchport mode trunk
+Switch(config-if)# exit</code></pre>
+            <p>(Optional but good practice) You can specify allowed VLANs and the native VLAN:</p>
+            <pre><code>// On SW1 and SW2 on interface Gi0/1
+Switch(config-if)# switchport trunk allowed vlan 10,20
+Switch(config-if)# switchport trunk native vlan 99 // (If used, VLAN 99 must be created on both switches)</code></pre>
+            <h3>Verifying the Solution:</h3>
+            <p>Try to ping PC2 (VLAN 10, SW2) from PC0 (VLAN 10, SW1) again (<code>ping 192.168.1.12</code>). The ping will be successful.</p>
+            <p><em>PT Visual: PC0 Command Prompt screen shows successful ping replies.</em></p>
+            <p>Try to ping PC3 (VLAN 20, SW2) from PC1 (VLAN 20, SW1) (<code>ping 192.168.1.13</code>). The ping will be successful.</p>
+            <p>Check the trunk port status on the switches:</p>
+            <pre><code>Switch# show interfaces trunk</code></pre>
+            <p><em>PT Visual: The output of <code>show interfaces trunk</code> lists port Gi0/1 with "Mode: on", "Encapsulation: 802.1q", "Status: trunking", and "Vlans allowed on trunk: 10,20".</em></p>
+            <img src="C:\Users\casper\desktop\network_solution3.png" alt="">
+            <img src="C:\Users\casper\desktop\network_output3.png" alt="">
+        </section>
+
+        <!-- SECTION 2: LAYER 3 ISSUES AND SOLUTIONS -->
+        <section id="problem2-1">
+            <h2>Problem 2.1: Inability to Access Different Networks Due to Incorrect Default Gateway Configuration</h2>
+            <h3>Concept:</h3>
+            <p>The Default Gateway is the IP address of the router interface that a device uses to send packets to a destination outside its own local network. If this address is incorrect or not defined, the device cannot communicate outside its local network.</p>
+            <h3>Problem Description:</h3>
+            <p>A PC (e.g., PC0) can communicate with other devices in its local network (e.g., another PC connected to the same switch) but cannot reach a destination in a different network (e.g., the internet, a server in another VLAN).</p>
+            <h3>Packet Tracer Scenario:</h3>
+            <h4>Required Devices:</h4>
+            <ul>
+                <li>1 x PC</li>
+                <li>1 x Switch (e.g., 2960)</li>
+                <li>1 x Router (e.g., 4331)</li>
+                <li>A Server or another PC can be added to simulate a remote network.</li>
+            </ul>
+            <h4>Connections:</h4>
+            <ul>
+                <li>PC0 -> Switch Fa0/1</li>
+                <li>Switch Gi0/1 -> Router G0/0/0 (Local network connection)</li>
+                <li>Router G0/0/1 -> Server0 (Remote network connection, representing the internet)</li>
+            </ul>
+            <h4>Basic Configurations:</h4>
+            <p><strong>PC0:</strong></p>
+            <ul>
+                <li>IP Address: 192.168.1.10</li>
+                <li>Subnet Mask: 255.255.255.0</li>
+                <li>Default Gateway: (This is where the problem will be introduced)</li>
+            </ul>
+            <p><strong>Router:</strong></p>
+            <ul>
+                <li>Interface G0/0/0 (facing local network): IP Address: 192.168.1.1 / Subnet Mask: 255.255.255.0, <code>no shutdown</code></li>
+                <li>Interface G0/0/1 (facing remote network): IP Address: 203.0.113.1 / Subnet Mask: 255.255.255.0, <code>no shutdown</code></li>
+            </ul>
+            <p><strong>Server0 (Remote Network):</strong></p>
+            <ul>
+                <li>IP Address: 203.0.113.100</li>
+                <li>Subnet Mask: 255.255.255.0</li>
+                <li>Default Gateway: 203.0.113.1 (Router's interface facing that network)</li>
+            </ul>
+            <h3>Simulating the Problem:</h3>
+            <p>In PC0's IP configuration, enter an incorrect Default Gateway (e.g., 192.168.1.254) or leave it blank.</p>
+            <p><em>PT Visual: PC0's IP Configuration window shows the Default Gateway field incorrect or empty.</em></p>
+            <p>Try to ping PC0's supposed Default Gateway address (Router G0/0/0: 192.168.1.1). This will be successful (as they are in the same L2 segment).</p>
+            <p><em>PT Visual: <code>ping 192.168.1.1</code> from PC0 Command Prompt is successful.</em></p>
+            <p>Try to ping Server0 (203.0.113.100) in the remote network from PC0. The ping will fail (you'll get "Request timed out" or "Destination host unreachable").</p>
+            <p><em>PT Visual: <code>ping 203.0.113.100</code> from PC0 Command Prompt fails.</em></p>
+            <h3>Solution Steps:</h3>
+            <p>Open PC0's IP configuration.</p>
+            <p>Update the Default Gateway address with the correct IP address of the router interface for PC0's network (192.168.1.1).</p>
+            <p><em>PT Visual: PC0's IP Configuration window shows the Default Gateway field corrected to 192.168.1.1.</em></p>
+            <h3>Verifying the Solution:</h3>
+            <p>Try to ping Server0 (203.0.113.100) in the remote network from PC0 again. The ping will be successful.</p>
+            <p><em>PT Visual: <code>ping 203.0.113.100</code> from PC0 Command Prompt is successful.</em></p>
+            <p>You can run <code>tracert 203.0.113.100</code> from PC0 to see the path the packet takes (it should show 192.168.1.1 as the first hop).</p>
+            <p><em>PT Visual: The <code>tracert</code> output shows 192.168.1.1 as the first line.</em></p>
+            <img src="C:\Users\casper\desktop\network_solution4.png" alt="">
+            <img src="C:\Users\casper\desktop\network_output4.png" alt="">
+        </section>
+
+        <section id="problem2-2">
+            <h2>Problem 2.2: Inability to Reach Destination Network Due to Missing Static Route</h2>
+            <h3>Concept:</h3>
+            <p>Routers use routing tables to decide how to forward packets to their destinations. When a router needs to send a packet to a network it's not directly connected to, it must know how to reach that network. This information is provided by dynamic routing protocols (RIP, EIGRP, OSPF, etc.) or by manually adding static routes.</p>
+            <h3>Problem Description:</h3>
+            <p>A router (R1) cannot forward packets to a remote network (e.g., a network behind R2) because it has no entry for it in its routing table. Therefore, a PC behind R1 cannot reach a PC behind R2.</p>
+            <h3>Packet Tracer Scenario:</h3>
+            <h4>Required Devices:</h4>
+            <ul>
+                <li>2 x PCs</li>
+                <li>2 x Routers (e.g., 4331)</li>
+            </ul>
+            <h4>Connections:</h4>
+            <ul>
+                <li>PC0 -> R1 G0/0/0</li>
+                <li>R1 G0/0/1 -> R2 G0/0/1 (Serial or Ethernet link between routers)</li>
+                <li>R2 G0/0/0 -> PC1</li>
+            </ul>
+            <h4>Basic Configurations:</h4>
+            <p><strong>PC0:</strong></p>
+            <ul>
+                <li>IP Address: 192.168.1.10/24</li>
+                <li>Default Gateway: 192.168.1.1</li>
+            </ul>
+            <p><strong>R1:</strong></p>
+            <ul>
+                <li>G0/0/0: IP 192.168.1.1/24, <code>no shutdown</code></li>
+                <li>G0/0/1: IP 10.0.0.1/30, <code>no shutdown</code></li>
+            </ul>
+            <p><strong>R2:</strong></p>
+            <ul>
+                <li>G0/0/1: IP 10.0.0.2/30, <code>no shutdown</code></li>
+                <li>G0/0/0: IP 192.168.2.1/24, <code>no shutdown</code></li>
+            </ul>
+            <p><strong>PC1:</strong></p>
+            <ul>
+                <li>IP Address: 192.168.2.10/24</li>
+                <li>Default Gateway: 192.168.2.1</li>
+            </ul>
+            <h3>Simulating the Problem:</h3>
+            <p>Configure the IP addresses and interfaces as above. Do not add static routes to the routers yet.</p>
+            <p>Try to ping PC1 from PC0 (<code>ping 192.168.2.10</code>). The ping will fail.</p>
+            <p><em>PT Visual: PC0 Command Prompt shows "Request timed out." or "Destination host unreachable" messages from R1.</em></p>
+            <p>Check R1's routing table:</p>
+            <pre><code>R1# show ip route</code></pre>
+            <p><em>PT Visual: R1's <code>show ip route</code> output does not show an entry for the 192.168.2.0/24 network. Only directly connected networks (192.168.1.0/24 and 10.0.0.0/30) are listed.</em></p>
+            <p>Similarly, R2's routing table will not have an entry for the 192.168.1.0/24 network.</p>
+            <h3>Solution Steps:</h3>
+            <p>On R1, add a static route to reach the 192.168.2.0/24 network via R2's 10.0.0.2 address as the next-hop:</p>
+            <pre><code>R1> enable
+R1# configure terminal
+R1(config)# ip route 192.168.2.0 255.255.255.0 10.0.0.2
+R1(config)# end</code></pre>
+            <p>On R2, add a static route to reach the 192.168.1.0/24 network via R1's 10.0.0.1 address as the next-hop (communication must be two-way):</p>
+            <pre><code>R2> enable
+R2# configure terminal
+R2(config)# ip route 192.168.1.0 255.255.255.0 10.0.0.1
+R2(config)# end</code></pre>
+            <h3>Verifying the Solution:</h3>
+            <p>Try to ping PC1 from PC0 again (<code>ping 192.168.2.10</code>). The ping will be successful.</p>
+            <p><em>PT Visual: PC0 Command Prompt shows successful ping replies.</em></p>
+            <p>Check the routing tables of R1 and R2 again:</p>
+            <pre><code>R1# show ip route
+R2# show ip route</code></pre>
+            <p><em>PT Visual: R1's <code>show ip route</code> output now shows a static route "S 192.168.2.0/24 [1/0] via 10.0.0.2". R2 will similarly show a route for 192.168.1.0/24.</em></p>
+            <img src="C:\Users\casper\desktop\network_solution5.png" alt="">
+            <img src="C:\Users\casper\desktop\network_output5.png" alt="">
+        </section>
+
+        <section id="problem2-3">
+            <h2>Problem 2.3: Unwanted Access Blocked (or Desired Access Accidentally Blocked) by a Simple Standard ACL</h2>
+            <h3>Concept:</h3>
+            <p>An Access Control List (ACL) is applied to router interfaces to filter traffic (permit/deny) coming from specific IP addresses or going to specific IP addresses. Standard ACLs filter based only on the source IP address.</p>
+            <h3>Problem Description:</h3>
+            <p>A standard ACL is used to block access from one network segment (source IP) to another (destination) or to permit only specific sources. However, if the ACL is written incorrectly (e.g., order of deny and permit statements, missing <code>permit any</code> statement), desired access can also be blocked, or unwanted access might be permitted.</p>
+            <h3>Packet Tracer Scenario:</h3>
+            <h4>Required Devices:</h4>
+            <ul>
+                <li>2 x PCs (PC-Source, PC-Destination/Server)</li>
+                <li>1 x Router (e.g., 4331)</li>
+            </ul>
+            <h4>Connections:</h4>
+            <ul>
+                <li>PC-Source -> Router G0/0/0</li>
+                <li>Router G0/0/1 -> PC-Destination/Server</li>
+            </ul>
+            <h4>Basic Configurations:</h4>
+            <p><strong>PC-Source:</strong> IP 192.168.1.10/24, DG 192.168.1.1</p>
+            <p><strong>Router:</strong></p>
+            <ul>
+                <li>G0/0/0: IP 192.168.1.1/24, <code>no shutdown</code></li>
+                <li>G0/0/1: IP 192.168.2.1/24, <code>no shutdown</code></li>
+            </ul>
+            <p><strong>PC-Destination/Server:</strong> IP 192.168.2.10/24, DG 192.168.2.1</p>
+            <h3>Simulating the Problem (Desired Access Accidentally Blocked):</h3>
+            <p>Our goal is to block access from the entire 192.168.1.0/24 network except PC-Source (192.168.1.10) to PC-Destination (192.168.2.10). Let's accidentally block PC-Source.</p>
+            <p>Create the following ACL on the router and apply it inbound on interface G0/0/0:</p>
+            <pre><code>Router> enable
+Router# configure terminal
+Router(config)# access-list 10 deny host 192.168.1.10 // Accidentally deny first
+Router(config)# access-list 10 permit any             // Then permit any
+Router(config)# interface GigabitEthernet0/0/0
+Router(config-if)# ip access-group 10 in
+Router(config-if)# end</code></pre>
+            <p>This ACL blocks 192.168.1.10 and permits everything else, the opposite of what might be intended if the goal was only to permit 192.168.1.10.</p>
+            <p>Try to ping PC-Destination (192.168.2.10) from PC-Source (192.168.1.10). The ping will fail (you might get "Destination host unreachable" or an "Administratively Prohibited" ICMP message).</p>
+            <p><em>PT Visual: PC-Source Command Prompt shows a failed ping, possibly with an ICMP error from R1.</em></p>
+            <p>Check ACL matches on the router:</p>
+            <pre><code>Router# show access-lists 10</code></pre>
+            <p><em>PT Visual: The output of <code>show access-lists 10</code> shows an increasing match count for the <code>deny host 192.168.1.10</code> line.</em></p>
+            <h3>Solution Steps:</h3>
+            <p>Correct the order and logic of the ACL statements. Traffic we want to permit should be specified with <code>permit</code> first, then what we want to deny with <code>deny</code>. Often, to avoid the implicit <code>deny any</code> at the end (if not blocking everything), a <code>permit any</code> (or more specific permits) is added.</p>
+            <p>To achieve the goal: Permit only 192.168.1.10, deny the rest of 192.168.1.0/24. (Standard ACLs don't specify destination, so it's source-based. Let's fix the "accidentally blocked desired access" scenario from the prompt).</p>
+            <p>Correction (to permit PC-Source, and deny everything else from that source network if G0/0/0 is only for 192.168.1.0/24):</p>
+            <pre><code>Router(config)# interface GigabitEthernet0/0/0
+Router(config-if)# no ip access-group 10 in // Remove from interface first
+Router(config-if)# exit
+Router(config)# no access-list 10          // Remove the old ACL
+Router(config)# access-list 10 permit host 192.168.1.10
+// If other traffic from this interface/network should also be permitted, add more permit lines or 'permit any'.
+// If the goal is *only* 192.168.1.10 is allowed and all other traffic from G0/0/0 is denied:
+// Router(config)# access-list 10 deny   any (optional, as there's an implicit deny any)
+Router(config)# interface GigabitEthernet0/0/0
+Router(config-if)# ip access-group 10 in
+Router(config-if)# end</code></pre>
+            <h3>Verifying the Solution:</h3>
+            <p>Try to ping PC-Destination (192.168.2.10) from PC-Source (192.168.1.10) again. The ping will be successful (based on the last corrected ACL above).</p>
+            <p><em>PT Visual: PC-Source Command Prompt shows a successful ping.</em></p>
+            <p>Check ACL matches on the router:</p>
+            <pre><code>Router# show access-lists 10</code></pre>
+            <p><em>PT Visual: The output of <code>show access-lists 10</code> shows an increasing match count for the <code>permit host 192.168.1.10</code> line.</em></p>
+            <p>If you had another PC in your network (e.g., 192.168.1.11) and the ACL was <code>permit host 192.168.1.10</code> followed by an implicit (or explicit) <code>deny any</code>, a ping attempt from 192.168.1.11 would fail.</p>
+            <img src="C:\Users\casper\desktop\network_problem6.png" alt="">
+            <img src="C:\Users\casper\desktop\network_output6.png" alt="">
+        </section>
+
+        <!-- SECTION 3: LAYER 7 (APPLICATION LAYER - PT SERVER USAGE) ISSUES -->
+        <section id="problem3-1">
+            <h2>Problem 3.1: Incorrect DHCP Server Configuration (Distributing Wrong Default Gateway or DNS Information)</h2>
+            <h3>Concept:</h3>
+            <p>DHCP (Dynamic Host Configuration Protocol) automatically assigns IP addresses, subnet masks, default gateway, and DNS server addresses to clients on a network. If the DHCP server distributes incorrect information, clients will have issues accessing the network or the internet.</p>
+            <h3>Problem Description:</h3>
+            <p>Client PCs are receiving IP addresses from the DHCP server but cannot access the internet or resolve domain names. The cause is that the default gateway or DNS server address distributed by the DHCP server is incorrect.</p>
+            <h3>Packet Tracer Scenario:</h3>
+            <h4>Required Devices:</h4>
+            <ul>
+                <li>1 x PT Server (for DHCP and DNS services)</li>
+                <li>1 x Switch</li>
+                <li>1 x PC (DHCP client)</li>
+                <li>1 x Router (acting as Default Gateway)</li>
+            </ul>
+            <h4>Connections:</h4>
+            <ul>
+                <li>PC -> Switch</li>
+                <li>PT Server -> Switch</li>
+                <li>Router (e.g., G0/0/0 interface) -> Switch</li>
+            </ul>
+            <h4>Basic Configurations:</h4>
+            <p><strong>Router (Gateway):</strong></p>
+            <ul>
+                <li>G0/0/0: IP 192.168.1.1/24, <code>no shutdown</code></li>
+            </ul>
+            <p><strong>PT Server:</strong></p>
+            <ul>
+                <li>Static IP: 192.168.1.254/24</li>
+                <li>Default Gateway: 192.168.1.1</li>
+                <li>DNS Server: 192.168.1.254 (itself)</li>
+            </ul>
+            <p><strong>PC:</strong> IP configuration set to DHCP.</p>
+            <h3>Simulating the Problem:</h3>
+            <p>On the PT Server, enable the DHCP service.</p>
+            <p>Create a new pool (e.g., ServerPool).</p>
+            <p>For this pool, enter an incorrect Default Gateway (e.g., 192.168.1.100 instead of 192.168.1.1).</p>
+            <p>Enter an incorrect DNS Server (e.g., 192.168.1.200 instead of 192.168.1.254).</p>
+            <p>Start IP Address: 192.168.1.10</p>
+            <p>Subnet Mask: 255.255.255.0</p>
+            <p>Maximum Number of Users: 50</p>
+            <p>Click "Save" and ensure the service is "On".</p>
+            <p><em>PT Visual: PT Server's DHCP service settings screen shows Default Gateway and DNS Server fields filled with incorrect values.</em></p>
+            <p>On the PC, go to Desktop > IP Configuration and select DHCP. The PC will obtain an IP address.</p>
+            <p>Check the IP information received by the PC (in the same window or via <code>ipconfig /all</code> in the command prompt). You will see that the Default Gateway and DNS Server addresses are the incorrect values you entered in DHCP.</p>
+            <p><em>PT Visual: PC's IP Configuration window or <code>ipconfig</code> output shows incorrect Gateway and DNS addresses.</em></p>
+            <p>Try to ping an internet address (if available) or access a website by name from the PC. It will fail.</p>
+            <h3>Solution Steps:</h3>
+            <p>Return to the DHCP service settings on the PT Server.</p>
+            <p>For ServerPool (or your created pool), correct the Default Gateway address to the proper 192.168.1.1.</p>
+            <p>Correct the DNS Server address to the proper 192.168.1.254 (or a valid DNS server).</p>
+            <p>Click "Save".</p>
+            <p><em>PT Visual: PT Server's DHCP service settings screen shows Default Gateway and DNS Server fields filled with correct values.</em></p>
+            <p>On the PC, go to IP Configuration, select "Static" first, then "DHCP" again to renew the IP address.</p>
+            <h3>Verifying the Solution:</h3>
+            <p>Check the new IP information received by the PC. You will see that the Default Gateway and DNS Server addresses are now correct.</p>
+            <p><em>PT Visual: PC's IP Configuration window or <code>ipconfig</code> output shows correct Gateway and DNS addresses.</em></p>
+            <p>Try to ping an internet address or access a website by name from the PC. It will be successful (if DNS is working correctly).</p>
+            <img src="C:\Users\casper\desktop\network_solution7.png" alt="">
+            <img src="C:\Users\casper\desktop\network_output7.png" alt="">
+        </section>
+
+        <section id="problem3-2">
+            <h2>Problem 3.2: Clients in Different VLANs Unable to Obtain IP from DHCP Server (Missing IP Helper-Address)</h2>
+            <h3>Concept:</h3>
+            <p>DHCP requests (DISCOVER, REQUEST) are sent as broadcasts. Routers, by default, do not forward broadcast traffic to different networks (VLANs). Therefore, if the DHCP server is in a different VLAN/subnet from the client, the client's broadcast DHCP request cannot reach the server. The <code>ip helper-address</code> command allows the router to intercept DHCP broadcasts arriving on a specific interface and forward them as unicasts to the specified DHCP server.</p>
+            <h3>Problem Description:</h3>
+            <p>The DHCP server is located in one VLAN (e.g., Server VLAN). PCs in a different user VLAN send DHCP requests, but these requests, being broadcasts, cannot cross the router to reach the DHCP server. As a result, PCs fail to obtain an IP address (they usually get an APIPA 169.254.x.x address).</p>
+            <h3>Packet Tracer Scenario:</h3>
+            <h4>Required Devices:</h4>
+            <ul>
+                <li>1 x PT Server (DHCP)</li>
+                <li>1 x Router (for Router-on-a-Stick)</li>
+                <li>1 x Switch</li>
+                <li>1 x PC</li>
+            </ul>
+            <h4>Connections:</h4>
+            <ul>
+                <li>PC -> Switch Fa0/1 (Access port for User VLAN)</li>
+                <li>PT Server -> Switch Fa0/2 (Access port for Server VLAN)</li>
+                <li>Switch Gi0/1 -> Router G0/0/0 (Trunk port)</li>
+            </ul>
+            <h4>Basic Configurations:</h4>
+            <p><strong>Switch:</strong></p>
+            <ul>
+                <li>Create VLAN 10 (USER_VLAN), VLAN 20 (SERVER_VLAN).</li>
+                <li>Assign Fa0/1 to VLAN 10 (<code>switchport access vlan 10</code>).</li>
+                <li>Assign Fa0/2 to VLAN 20 (<code>switchport access vlan 20</code>).</li>
+                <li>Make Gi0/1 a trunk port (<code>switchport mode trunk</code>).</li>
+            </ul>
+            <p><strong>Router (Router-on-a-Stick):</strong></p>
+            <ul>
+                <li><code>interface G0/0/0.10</code> (Subinterface for VLAN 10): <code>encapsulation dot1q 10</code>, <code>ip address 192.168.10.1 255.255.255.0</code>, <code>no shutdown</code></li>
+                <li><code>interface G0/0/0.20</code> (Subinterface for VLAN 20): <code>encapsulation dot1q 20</code>, <code>ip address 192.168.20.1 255.255.255.0</code>, <code>no shutdown</code></li>
+                <li>Enable the physical interface: <code>interface G0/0/0</code>, <code>no shutdown</code></li>
+            </ul>
+            <p><strong>PT Server (DHCP Server):</strong></p>
+            <ul>
+                <li>Static IP: 192.168.20.100/24 (In Server VLAN)</li>
+                <li>Default Gateway: 192.168.20.1 (Gateway for Server VLAN)</li>
+            </ul>
+            <p><strong>DHCP Service:</strong></p>
+            <ul>
+                <li>Pool Name: USER_POOL</li>
+                <li>Default Gateway: 192.168.10.1 (Gateway for User VLAN)</li>
+                <li>DNS Server: (A valid address, e.g., 192.168.20.100 if it also provides DNS)</li>
+                <li>Start IP Address: 192.168.10.10</li>
+                <li>Subnet Mask: 255.255.255.0</li>
+                <li>"Save" the pool and turn the service "On".</li>
+            </ul>
+            <p><strong>PC:</strong> In VLAN 10, IP configuration set to DHCP.</p>
+            <h3>Simulating the Problem:</h3>
+            <p>Configure everything as described, but do not use the <code>ip helper-address</code> command on the router.</p>
+            <p>On the PC, go to Desktop > IP Configuration and select DHCP. After a while, the PC will fail to obtain an IP address and will get an APIPA address (169.254.x.x).</p>
+            <p><em>PT Visual: PC's IP Configuration window shows an APIPA address (169.254.x.x) and may display a "DHCP request failed" message.</em></p>
+            <h3>Solution Steps:</h3>
+            <p>Connect to the router's CLI.</p>
+            <p>Enter the router interface (subinterface G0/0/0.10 in this scenario) connected to the User VLAN (VLAN 10).</p>
+            <p>Add the <code>ip helper-address [DHCP_server_IP_address]</code> command. The DHCP server's IP address is 192.168.20.100.</p>
+            <pre><code>Router> enable
+Router# configure terminal
+Router(config)# interface GigabitEthernet0/0/0.10
+Router(config-subif)# ip helper-address 192.168.20.100
+Router(config-subif)# end</code></pre>
+            <h3>Verifying the Solution:</h3>
+            <p>On the PC, go to IP Configuration, select "Static" first, then "DHCP" again to renew the IP address.</p>
+            <p>You will see that the PC now obtains the correct IP address (e.g., 192.168.10.10) from the DHCP server (from USER_POOL), along with the gateway (192.168.10.1) and other information.</p>
+            <p><em>PT Visual: PC's IP Configuration window shows an IP address in the 192.168.10.x range obtained via DHCP, with correct gateway and DNS information.</em></p>
+            <img src="C:\Users\casper\desktop\network_solution8.png" alt="">
+            <img src="C:\Users\casper\desktop\network_output8.png" alt="">
+        </section>
+
+        <section id="problem3-3">
+            <h2>Problem 3.3: Domain Name Resolution Failure Due to Missing Record on DNS Server</h2>
+            <h3>Concept:</h3>
+            <p>DNS (Domain Name System) is a hierarchical system that translates human-readable domain names (e.g., www.cisco.com) into machine-understandable IP addresses (e.g., 104.86.223.135). If a DNS server does not have a record for a specific domain name, or if it's incorrect, access to that domain name will fail.</p>
+            <h3>Problem Description:</h3>
+            <p>A user tries to access a website (e.g., www.example-pt.com) via a browser but receives a "Hostname unresolved" or "Page not found" error. If the IP address of that site is known and can be pinged, the problem is likely with DNS resolution.</p>
+            <h3>Packet Tracer Scenario:</h3>
+            <h4>Required Devices:</h4>
+            <ul>
+                <li>1 x PT Server (for DNS and HTTP services)</li>
+                <li>1 x PC</li>
+                <li>1 x Switch</li>
+            </ul>
+            <h4>Connections:</h4>
+            <p>PC -> Switch, PT Server -> Switch.</p>
+            <h4>Basic Configurations:</h4>
+            <p><strong>PT Server:</strong></p>
+            <ul>
+                <li>Static IP: 192.168.1.100/24</li>
+                <li>Default Gateway: (Can be left blank or router IP if no outbound access needed)</li>
+                <li>DNS Service: "On"</li>
+                <li>HTTP Service: "On" (index.html file can have a simple "Hello World" text)</li>
+            </ul>
+            <p><strong>PC:</strong></p>
+            <ul>
+                <li>Static IP: 192.168.1.10/24</li>
+                <li>Default Gateway: (Same as above)</li>
+                <li>DNS Server: 192.168.1.100 (PT Server's IP)</li>
+            </ul>
+            <h3>Simulating the Problem:</h3>
+            <p>On the PT Server, go to the DNS service. Do not add an A record for www.example-pt.com.</p>
+            <p><em>PT Visual: PT Server's DNS service settings screen shows no record for www.example-pt.com.</em></p>
+            <p>Open PC's Desktop > Web Browser.</p>
+            <p>In the address bar, type <code>http://www.example-pt.com</code> and click "Go". You will receive a "Hostname unresolved" error.</p>
+            <p><em>PT Visual: PC's web browser shows a "Hostname unresolved" error.</em></p>
+            <p>Open PC's Command Prompt and run <code>ping www.example-pt.com</code>. You will get a "Ping request could not find host..." error.</p>
+            <p><em>PT Visual: PC Command Prompt shows the <code>ping www.example-pt.com</code> command failing, stating it cannot resolve the name.</em></p>
+            <p>However, if you run <code>ping 192.168.1.100</code> (PT Server's IP), it will be successful. This indicates network connectivity is fine, but name resolution is not working.</p>
+            <p><em>PT Visual: <code>ping 192.168.1.100</code> from PC Command Prompt is successful.</em></p>
+            <h3>Solution Steps:</h3>
+            <p>Go to the DNS service settings on the PT Server.</p>
+            <p>In the "Resource Records" section:</p>
+            <ul>
+                <li>Name: www.example-pt.com</li>
+                <li>Type: A Record (default)</li>
+                <li>Address: 192.168.1.100 (PT Server's own IP, as the HTTP service is also running there)</li>
+            </ul>
+            <p>Click "Add". Then "Save" (usually auto-saves, but ensure).</p>
+            <p><em>PT Visual: PT Server's DNS service settings screen now shows an A record: www.example-pt.com -> 192.168.1.100.</em></p>
+            <h3>Verifying the Solution:</h3>
+            <p>Reopen PC's Desktop > Web Browser.</p>
+            <p>In the address bar, type <code>http://www.example-pt.com</code> and click "Go". This time, the index.html content from the PT Server's HTTP service (e.g., "Hello World") will be displayed.</p>
+            <p><em>PT Visual: PC's web browser displays the content of www.example-pt.com (index.html from PT Server).</em></p>
+            <p>Open PC's Command Prompt and run <code>ping www.example-pt.com</code>. This time, you will see the name resolved to 192.168.1.100 and the ping will be successful.</p>
+            <p><em>PT Visual: <code>ping www.example-pt.com</code> from PC Command Prompt works, shows the IP address (192.168.1.100), and receives successful ping replies.</em></p>
+            <p>You can also use the <code>nslookup www.example-pt.com</code> command to see the result of the DNS query.</p>
+            <p><em>PT Visual: The <code>nslookup</code> output shows that 192.168.1.100 is returned for www.example-pt.com.</em></p>
+            <img src="C:\Users\casper\desktop\network_problem9.png" alt="">
+            <img src="C:\Users\casper\desktop\network_output9.png" alt="">
+        </section>
+
+        <!-- SECTION 4: LAYER 1 (PHYSICAL LAYER - BASIC LEVEL) ISSUES -->
+        <section id="problem4-1">
+            <h2>Problem 4.1: No Connectivity Due to Interface Being Administratively Down</h2>
+            <h3>Concept:</h3>
+            <p>Interfaces on network devices (routers, switches) can be administratively shut down using the <code>shutdown</code> command. In this state, even if the physical connection is correct, no data transmission will occur through the interface.</p>
+            <h3>Problem Description:</h3>
+            <p>A PC is physically connected to a switch with the correct cable, or a router is connected to another router, but there is no communication. In Packet Tracer, the link lights for the respective port are red (or one might be red, the other green/orange).</p>
+            <h3>Packet Tracer Scenario:</h3>
+            <h4>Required Devices:</h4>
+            <ul>
+                <li>1 x PC</li>
+                <li>1 x Switch (e.g., 2960). (Or 2 x Routers).</li>
+            </ul>
+            <h4>Connections:</h4>
+            <p>PC -> Switch Fa0/1.</p>
+            <h4>Basic Configurations:</h4>
+            <p>Give the PC an IP address: 192.168.1.10/24.</p>
+            <p>You can give the Switch a management IP (SVI) (e.g., 192.168.1.1/24 for VLAN 1), but it's not mandatory for this problem.</p>
+            <h3>Simulating the Problem:</h3>
+            <p>Connect the PC to Switch's Fa0/1 port. Normally, the link lights turn green.</p>
+            <p><em>PT Visual: The link lights on both ends of the connection between PC and Switch Fa0/1 are green.</em></p>
+            <p>Enter the Switch's CLI and administratively shut down interface Fa0/1:</p>
+            <pre><code>Switch> enable
+Switch# configure terminal
+Switch(config)# interface FastEthernet0/1
+Switch(config-if)# shutdown
+Switch(config-if)# end</code></pre>
+            <p>Now look at the Packet Tracer topology. You will see the link light on Switch port Fa0/1 turn red. The link light on the PC side will also usually turn red.</p>
+            <p><em>PT Visual: The link light on Switch port Fa0/1 is red. The link light on the PC side is also red.</em></p>
+            <p>Check the interface status on the switch:</p>
+            <pre><code>Switch# show ip interface brief</code></pre>
+            <p><em>PT Visual: The output of <code>show ip interface brief</code> for FastEthernet0/1 shows "administratively down" in the "Status" column and "down" in the "Protocol" column.</em></p>
+            <p>Try to ping the switch's management IP (if configured) or another device on the same network from the PC. It will fail.</p>
+            <h3>Solution Steps:</h3>
+            <p>Enter the Switch's CLI.</p>
+            <p>Enter the configuration mode for the shutdown interface Fa0/1.</p>
+            <p>Apply the <code>no shutdown</code> command to enable the interface:</p>
+            <pre><code>Switch# configure terminal
+Switch(config)# interface FastEthernet0/1
+Switch(config-if)# no shutdown
+Switch(config-if)# end</code></pre>
+            <h3>Verifying the Solution:</h3>
+            <p>Look at the Packet Tracer topology. You will see the link lights on Switch port Fa0/1 and on the PC turn green (after a short delay for STP).</p>
+            <p><em>PT Visual: The link lights on Switch port Fa0/1 and on the PC are green.</em></p>
+            <p>Check the interface status on the switch again:</p>
+            <pre><code>Switch# show ip interface brief</code></pre>
+            <p><em>PT Visual: The output of <code>show ip interface brief</code> for FastEthernet0/1 now shows "up" in the "Status" column and "up" in the "Protocol" column.</em></p>
+            <p>Try to ping the switch's management IP or another device on the same network from the PC. It will be successful.</p>
+            <img src="C:\Users\casper\desktop\network_problem10.png" alt="">
+            <img src="C:\Users\casper\desktop\network_output10.png" alt="">
+            <hr>
+            <p>These 10 problem and solution scenarios provide a solid starting point for developing basic network troubleshooting skills in Packet Tracer. By carefully implementing each scenario and examining the command outputs, you can better understand networking concepts.</p>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>© 2023 Network Troubleshooting Guide. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
